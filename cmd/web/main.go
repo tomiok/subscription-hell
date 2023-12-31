@@ -22,7 +22,7 @@ func main() {
 	app.Static("/static/css", "./static/css")
 
 	app.Get("/sign-up", userWeb.SignUp)
-	app.Get("/login", userWeb.SignUp)
+	app.Get("/login", userWeb.Login)
 
 	log.Fatal(app.Listen(":3000"))
 }

@@ -12,3 +12,7 @@ func NewWebUser() *User {
 func (u *User) SignUp(c *fiber.Ctx) error {
 	return c.Render("signup", fiber.Map{})
 }
+
+func (u *User) Login(c *fiber.Ctx) error {
+	return c.Render("login", fiber.Map{})
+}
