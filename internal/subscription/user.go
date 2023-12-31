@@ -12,3 +12,7 @@ type Storage interface {
 	Create(nick, password string) (User, error)
 	Login(nick, password string) (string, error)
 }
+
+type Service struct {
+	Secret string
+}
