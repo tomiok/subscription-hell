@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/tomiok/subscription-hell/internal/subscription/web"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -8,20 +9,20 @@ import (
 )
 
 func main() {
+	userWeb := web.NewWebUser()
+
 	// Create a new engine
 	engine := html.New("./views", ".html")
 
 	// Pass the engine to the Views
 	app := fiber.New(fiber.Config{
-		Views: engine,
+		Views:       engine,
+		ViewsLayout: "layouts/main",
 	})
+	app.Static("/static/css", "./static/css")
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		// Render index within layouts/main
-		return c.Render("index", fiber.Map{
-			"Title": "Hello, World!",
-		}, "layouts/main")
-	})
+	app.Get("/sign-up", userWeb.SignUp)
+	app.Get("/login", userWeb.SignUp)
 
 	log.Fatal(app.Listen(":3000"))
 }

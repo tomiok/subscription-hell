@@ -1,6 +1,9 @@
 package subscription
 
-import "gorm.io/gorm"
+import (
+	"context"
+	"gorm.io/gorm"
+)
 
 type (
 	SubType string
@@ -14,4 +17,10 @@ type Sub struct {
 	PaidWith  string
 	Type      SubType
 	Frequency Freq
+	UserID    uint
+}
+
+type Storage interface {
+	Add(ctx context.Context, s Sub) (Sub, error)
+	ViewAll(ctx context.Context) ([]Sub, error)
 }
