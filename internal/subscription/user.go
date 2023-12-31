@@ -1,6 +1,11 @@
 package subscription
 
-import "gorm.io/gorm"
+import (
+	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+	"time"
+)
 
 type User struct {
 	gorm.Model
@@ -10,10 +15,48 @@ type User struct {
 }
 
 type UserStorage interface {
-	Create(nick, password string) (User, error)
-	Login(nick, password string) (string, error)
+	Create(user *User) (*User, error)
+	Login(nick string) (User, error)
 }
 
 type UserService struct {
+	UserStorage
 	Secret string
+}
+
+func (us *UserService) CreateUser(nick, pass string) (*User, error) {
+	password, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
+
+	var user = User{
+		Nick:     nick,
+		Password: string(password),
+		Subs:     nil,
+	}
+
+	return us.Create(&user)
+}
+
+func (us *UserService) LoginUser(nick, pass string) (User, string, error) {
+	user, err := us.Login(nick)
+	if err != nil {
+		return User{}, "", err
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(pass)); err != nil {
+		return User{}, "", err
+	}
+
+	return user, signToken(user.ID, us.Secret), nil
+}
+
+func signToken(id uint, key string) string {
+	claims := make(jwt.MapClaims)
+	claims["sub"] = id
+	claims["exp"] = time.Now().Add(time.Hour * 172999).Unix()
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
+
+	signedString, _ := token.SignedString([]byte(key))
+
+	return signedString
 }
