@@ -20,8 +20,8 @@ type UserStorage interface {
 }
 
 type UserService struct {
-	UserStorage
-	Secret string
+	storage UserStorage
+	Secret  string
 }
 
 func (us *UserService) CreateUser(nick, pass string) (*User, error) {
@@ -33,11 +33,11 @@ func (us *UserService) CreateUser(nick, pass string) (*User, error) {
 		Subs:     nil,
 	}
 
-	return us.Create(&user)
+	return us.storage.Create(&user)
 }
 
 func (us *UserService) LoginUser(nick, pass string) (User, string, error) {
-	user, err := us.Login(nick)
+	user, err := us.storage.Login(nick)
 	if err != nil {
 		return User{}, "", err
 	}

@@ -1,0 +1,19 @@
+version: '3'
+services:
+  db:
+    image: 'postgres:15.3'
+    restart: always
+    environment:
+      POSTGRES_DB: news
+      POSTGRES_USER: news
+      POSTGRES_PASSWORD: news
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    labels:
+      io.portainer.accesscontrol.public: ""
+volumes:
+  db-data:
+    labels:
+      io.portainer.accesscontrol.public: ""

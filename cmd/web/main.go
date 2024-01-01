@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/tomiok/subscription-hell/internal/subscription/web"
 	"log"
 
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	userWeb := web.NewWebUser()
+	sess := session.New()
+	userWeb := web.NewWebUser(nil, sess)
 
 	// Create a new engine
 	engine := html.New("./views", ".html")

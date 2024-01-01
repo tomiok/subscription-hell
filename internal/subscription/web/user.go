@@ -2,13 +2,23 @@ package web
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/tomiok/subscription-hell/internal/subscription"
 )
 
 type User struct {
+	*subscription.UserService
+	store *session.Store
 }
 
-func NewWebUser() *User {
-	return &User{}
+func NewWebUser(
+	service *subscription.UserService,
+	store *session.Store,
+) *User {
+	return &User{
+		UserService: service,
+		store:       store,
+	}
 }
 
 /*
@@ -27,7 +37,15 @@ func (u *User) LoginView(c *fiber.Ctx) error {
 
 // HomeView shows up home view (index).
 func (u *User) HomeView(c *fiber.Ctx) error {
-	return c.Render("index", fiber.Map{})
+	sess, err := u.store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	userID := sess.Get("userID")
+	return c.Render("index", fiber.Map{
+		"userID": userID,
+	})
 }
 
 /*
@@ -36,5 +54,20 @@ logic
 
 // Signup
 func (u *User) Signup(c *fiber.Ctx) error {
-	return c.Redirect("/b/")
+	nick := c.FormValue("nickname")
+	pass := c.FormValue("password")
+
+	user, err := u.UserService.CreateUser(nick, pass)
+	if err != nil {
+		return err
+	}
+
+	sess, err := u.store.Get(c)
+	if err != nil {
+		return err
+	}
+
+	sess.Set("userID", user.ID)
+
+	return c.Redirect("/b")
 }
