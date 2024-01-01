@@ -21,8 +21,13 @@ func main() {
 	})
 	app.Static("/static/css", "./static/css")
 
-	app.Get("/sign-up", userWeb.SignUpView)
-	app.Get("/login", userWeb.LoginView)
+	viewsRouter := app.Group("v")
+	viewsRouter.Get("/sign-up", userWeb.SignUpView)
+	viewsRouter.Get("/login", userWeb.LoginView)
+
+	bizRouter := app.Group("b")
+	bizRouter.Post("/sign-up", userWeb.Signup)
+	bizRouter.Get("/", userWeb.HomeView)
 
 	log.Fatal(app.Listen(":3000"))
 }
