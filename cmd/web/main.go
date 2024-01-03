@@ -42,6 +42,10 @@ func main() {
 
 func init() {
 	database.InitDB("localhost", "subs", "subs", "subs", 5432)
+
+	if err := database.Migrate(subscription.User{}, subscription.Sub{}); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func newDeps() *deps {

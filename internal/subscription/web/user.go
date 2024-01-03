@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/tomiok/subscription-hell/internal/subscription"
+	"log"
 )
 
 type User struct {
@@ -68,6 +69,9 @@ func (u *User) Signup(c *fiber.Ctx) error {
 	}
 
 	sess.Set("userID", user.ID)
+	if err = sess.Save(); err != nil {
+		log.Print("cannot save in session")
+	}
 
 	return c.Redirect("/b")
 }

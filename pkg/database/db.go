@@ -27,3 +27,7 @@ func InitDB(host, user, pass, dbName string, port int) {
 			DB = db
 		})
 }
+
+func Migrate(models ...any) error {
+	return DB.AutoMigrate(models...)
+}
