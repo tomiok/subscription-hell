@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v2/middleware/session"
 	"github.com/tomiok/subscription-hell/internal/subscription"
+	"github.com/tomiok/subscription-hell/internal/subscription/storage"
 	"github.com/tomiok/subscription-hell/internal/subscription/web"
 	"github.com/tomiok/subscription-hell/pkg/database"
 	"log"
@@ -12,14 +13,11 @@ import (
 )
 
 type deps struct {
-	store        *session.Store
-	userService  *subscription.UserService
 	usersHandler *web.User
 }
 
 func main() {
-	sess := session.New()
-	userWeb := web.NewWebUser(nil, sess)
+	d := newDeps()
 
 	// Create a new engine
 	engine := html.New("./views", ".html")
@@ -32,12 +30,12 @@ func main() {
 	app.Static("/static/css", "./static/css")
 
 	viewsRouter := app.Group("v")
-	viewsRouter.Get("/sign-up", userWeb.SignUpView)
-	viewsRouter.Get("/login", userWeb.LoginView)
+	viewsRouter.Get("/sign-up", d.usersHandler.SignUpView)
+	viewsRouter.Get("/login", d.usersHandler.LoginView)
 
 	bizRouter := app.Group("b")
-	bizRouter.Post("/sign-up", userWeb.Signup)
-	bizRouter.Get("/", userWeb.HomeView)
+	bizRouter.Post("/sign-up", d.usersHandler.Signup)
+	bizRouter.Get("/", d.usersHandler.HomeView)
 
 	log.Fatal(app.Listen(":3000"))
 }
@@ -47,9 +45,12 @@ func init() {
 }
 
 func newDeps() *deps {
+	store := session.New()
+	userStorage := storage.NewUserStorage()
+	userService := subscription.NewUserService("secret-change-me", userStorage)
+	usersHandler := web.NewWebUser(userService, store)
 
 	return &deps{
-		store:       nil,
-		userService: nil,
+		usersHandler: usersHandler,
 	}
 }
