@@ -24,6 +24,13 @@ type UserService struct {
 	Secret  string
 }
 
+func NewUserService(secret string, storage UserStorage) *UserService {
+	return &UserService{
+		storage: storage,
+		Secret:  secret,
+	}
+}
+
 func (us *UserService) CreateUser(nick, pass string) (*User, error) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
 

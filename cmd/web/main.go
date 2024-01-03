@@ -2,12 +2,20 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2/middleware/session"
+	"github.com/tomiok/subscription-hell/internal/subscription"
 	"github.com/tomiok/subscription-hell/internal/subscription/web"
+	"github.com/tomiok/subscription-hell/pkg/database"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 )
+
+type deps struct {
+	store        *session.Store
+	userService  *subscription.UserService
+	usersHandler *web.User
+}
 
 func main() {
 	sess := session.New()
@@ -32,4 +40,16 @@ func main() {
 	bizRouter.Get("/", userWeb.HomeView)
 
 	log.Fatal(app.Listen(":3000"))
+}
+
+func init() {
+	database.InitDB("localhost", "subs", "subs", "subs", 5432)
+}
+
+func newDeps() *deps {
+
+	return &deps{
+		store:       nil,
+		userService: nil,
+	}
 }

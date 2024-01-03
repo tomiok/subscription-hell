@@ -12,8 +12,10 @@ var DB *gorm.DB
 var once sync.Once
 
 func InitDB(host, user, pass, dbName string, port int) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=America/New York",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
 		host, user, pass, dbName, port)
+
+	fmt.Println(dsn)
 	once.Do(
 		func() {
 

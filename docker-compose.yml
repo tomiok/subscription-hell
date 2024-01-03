@@ -4,9 +4,9 @@ services:
     image: 'postgres:15.3'
     restart: always
     environment:
-      POSTGRES_DB: news
-      POSTGRES_USER: news
-      POSTGRES_PASSWORD: news
+      POSTGRES_DB: subs
+      POSTGRES_USER: subs
+      POSTGRES_PASSWORD: subs
     ports:
       - "5432:5432"
     volumes:
