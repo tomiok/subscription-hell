@@ -33,9 +33,9 @@ func main() {
 	viewsRouter.Get("/sign-up", d.usersHandler.SignUpView)
 	viewsRouter.Get("/login", d.usersHandler.LoginView)
 
-	bizRouter := app.Group("b")
+	bizRouter := app.Group("")
 	bizRouter.Post("/sign-up", d.usersHandler.Signup)
-	bizRouter.Get("/", d.usersHandler.HomeView)
+	bizRouter.Use(web.Auth).Get("/", d.usersHandler.HomeView)
 
 	log.Fatal(app.Listen(":3000"))
 }
