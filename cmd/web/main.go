@@ -13,6 +13,7 @@ import (
 )
 
 type deps struct {
+	store        *session.Store
 	usersHandler *web.User
 }
 
@@ -35,7 +36,7 @@ func main() {
 
 	bizRouter := app.Group("")
 	bizRouter.Post("/sign-up", d.usersHandler.Signup)
-	bizRouter.Use(web.Auth).Get("/", d.usersHandler.HomeView)
+	bizRouter.Use(web.Auth(d.store)).Get("/", d.usersHandler.HomeView)
 
 	log.Fatal(app.Listen(":3000"))
 }
@@ -55,6 +56,7 @@ func newDeps() *deps {
 	usersHandler := web.NewWebUser(userService, store)
 
 	return &deps{
+		store:        store,
 		usersHandler: usersHandler,
 	}
 }
