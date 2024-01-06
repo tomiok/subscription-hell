@@ -12,9 +12,9 @@ func NewUserStorage() *UserStorage {
 	return &UserStorage{}
 }
 
-func (u UserStorage) Create(user *subscription.User) (*subscription.User, error) {
-	if err := database.DB.Save(user).Error; err != nil {
-		return nil, err
+func (u UserStorage) Create(user subscription.User) (subscription.User, error) {
+	if err := database.DB.Save(&user).Error; err != nil {
+		return subscription.User{}, err
 	}
 
 	return user, nil

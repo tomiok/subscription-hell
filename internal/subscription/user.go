@@ -15,7 +15,7 @@ type User struct {
 }
 
 type UserStorage interface {
-	Create(user *User) (*User, error)
+	Create(user User) (User, error)
 	Login(nick string) (User, error)
 }
 
@@ -31,7 +31,7 @@ func NewUserService(secret string, storage UserStorage) *UserService {
 	}
 }
 
-func (us *UserService) CreateUser(nick, pass string) (*User, error) {
+func (us *UserService) CreateUser(nick, pass string) (User, error) {
 	password, _ := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
 
 	var user = User{
@@ -40,7 +40,7 @@ func (us *UserService) CreateUser(nick, pass string) (*User, error) {
 		Subs:     nil,
 	}
 
-	return us.storage.Create(&user)
+	return us.storage.Create(user)
 }
 
 func (us *UserService) LoginUser(nick, pass string) (User, string, error) {

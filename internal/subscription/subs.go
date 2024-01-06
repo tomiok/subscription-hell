@@ -30,7 +30,7 @@ type SubRequest struct {
 }
 
 type Storage interface {
-	Add(ctx context.Context, s Sub) (Sub, error)
+	Add(userID uint, s Sub) (Sub, error)
 	ViewAll(ctx context.Context) ([]Sub, error)
 }
 
@@ -44,6 +44,6 @@ func NewService(s Storage) *Service {
 	}
 }
 
-func (s *Service) AddSub() {
+func (s *Service) AddSub(userID uint, r SubRequest) (Sub, error) {
 
 }
