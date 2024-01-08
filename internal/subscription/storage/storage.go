@@ -5,8 +5,7 @@ import (
 	"github.com/tomiok/subscription-hell/pkg/database"
 )
 
-type UserStorage struct {
-}
+type UserStorage struct{}
 
 func NewUserStorage() *UserStorage {
 	return &UserStorage{}

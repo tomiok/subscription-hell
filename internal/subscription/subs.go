@@ -1,7 +1,6 @@
 package subscription
 
 import (
-	"context"
 	"gorm.io/gorm"
 )
 
@@ -26,12 +25,12 @@ type SubRequest struct {
 	PaidWith  string  `json:"paid_with"`
 	Type      SubType `json:"type"`
 	Frequency Freq    `json:"frequency"`
-	UserID    uint    `json:"user_id"`
+	UserID    uint    `json:"-"`
 }
 
 type Storage interface {
-	Add(userID uint, s Sub) (Sub, error)
-	ViewAll(ctx context.Context) ([]Sub, error)
+	Add(s Sub) (Sub, error)
+	ViewAll(userID uint) ([]Sub, error)
 }
 
 type Service struct {
@@ -44,6 +43,15 @@ func NewService(s Storage) *Service {
 	}
 }
 
-func (s *Service) AddSub(userID uint, r SubRequest) (Sub, error) {
+func (s *Service) AddSub(req SubRequest) (Sub, error) {
+	var sub = Sub{
+		Name:      req.Name,
+		ManagedIn: req.ManagedIn,
+		PaidWith:  req.PaidWith,
+		Type:      req.Type,
+		Frequency: req.Frequency,
+		UserID:    req.UserID,
+	}
 
+	return s.storage.Add(sub)
 }
